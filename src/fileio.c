@@ -247,68 +247,6 @@ restore_point_unwind (Lisp_Object location)
 
 
 
-DEFUN ("find-file-name-handler", Ffind_file_name_handler,
-       Sfind_file_name_handler, 2, 2, 0,
-       doc: /* Return FILENAME's handler function for OPERATION, if it has one.
-Otherwise, return nil.
-A file name is handled if one of the regular expressions in
-`file-name-handler-alist' matches it.
-
-If OPERATION equals `inhibit-file-name-operation', then ignore
-any handlers that are members of `inhibit-file-name-handlers',
-but still do run any other handlers.  This lets handlers
-use the standard functions without calling themselves recursively.  */)
-  (Lisp_Object filename, Lisp_Object operation)
-{
-  /* This function must not munge the match data.  */
-  Lisp_Object chain, inhibited_handlers, result;
-  ptrdiff_t pos = -1;
-
-  result = Qnil;
-  CHECK_STRING (filename);
-
-  if (EQ (operation, Vinhibit_file_name_operation))
-    inhibited_handlers = Vinhibit_file_name_handlers;
-  else
-    inhibited_handlers = Qnil;
-
-  for (chain = Vfile_name_handler_alist; CONSP (chain);
-       chain = XCDR (chain))
-    {
-      Lisp_Object elt;
-      elt = XCAR (chain);
-      if (CONSP (elt))
-	{
-	  Lisp_Object string = XCAR (elt);
-	  ptrdiff_t match_pos;
-	  Lisp_Object handler = XCDR (elt);
-	  Lisp_Object operations = Qnil;
-
-	  if (SYMBOLP (handler))
-	    operations = Fget (handler, Qoperations);
-
-	  if (STRINGP (string)
-	      && (match_pos = fast_string_match (string, filename)) > pos
-	      && (NILP (operations) || ! NILP (Fmemq (operation, operations))))
-	    {
-	      Lisp_Object tem;
-
-	      handler = XCDR (elt);
-	      tem = Fmemq (handler, inhibited_handlers);
-	      if (NILP (tem))
-		{
-		  result = handler;
-		  pos = match_pos;
-		}
-	    }
-	}
-
-      maybe_quit ();
-    }
-  return result;
-}
-
-
 DEFUN ("file-name-directory", Ffile_name_directory, Sfile_name_directory,
        1, 1, 0,
        doc: /* Return the directory component in file name FILENAME.
@@ -6034,7 +5972,6 @@ This includes interactive calls to `delete-file' and
   DEFSYM (Qstdout, "stdout");
   DEFSYM (Qstderr, "stderr");
 
-  defsubr (&Sfind_file_name_handler);
   defsubr (&Sfile_name_directory);
   defsubr (&Sfile_name_nondirectory);
   defsubr (&Sunhandled_file_name_directory);

@@ -1387,7 +1387,10 @@ extern "C" {
     pub static Vminibuffer_list: Lisp_Object;
     pub static Vprocess_alist: Lisp_Object;
     pub static Vrun_hooks: Lisp_Object;
-
+    pub static Vinhibit_file_name_operation: Lisp_Object;
+    pub static Vinhibit_file_name_handlers: Lisp_Object;
+    pub static Vfile_name_handler_alist: Lisp_Object;
+    
     pub fn staticpro(varaddress: *const Lisp_Object);
 
     // Use LispObject::tag_ptr instead of make_lisp_ptr
@@ -1724,6 +1727,7 @@ extern "C" {
         all_frames: Lisp_Object,
     ) -> Lisp_Object;
     pub fn buffer_local_value(variable: Lisp_Object, buffer: Lisp_Object) -> Lisp_Object;
+    pub fn fast_string_match(regex: Lisp_Object, string: Lisp_Object) -> ptrdiff_t;
 }
 
 /// Contains C definitions from the font.h header.
