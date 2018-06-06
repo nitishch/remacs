@@ -123,3 +123,4 @@ Below are a list of common mistakes we catch in code review.
 
 * Prefer `EmacsInt::from(foo)` over `foo as EmacsInt`. The compiler will
   be able to warn you if the conversion is lossy.
+  <!--  -->
